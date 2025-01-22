@@ -1,3 +1,16 @@
-.login .log{
+/* .login .log{
     margin-left: 100px;
+} */
+
+
+.login .login_error{
+    color: red;
+    font-size: 12px;
+}
+
+.login .password_error{
+    display: block;
+    margin-top: 20px;
+    color: red;
+    font-size: 12px;
 }
