@@ -71,29 +71,17 @@ AuthCheck('', 'login.php');
                   <?php
                   require 'api/DB.php';
                   require_once('api/clients/OutputClients.php');
-
-                  $clients = $db->query(
-                    "SELECT * FROM clients
-                    ")->fetchAll();
-                     $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll()[0];
-                     $clients = [
-                      'id' => $output['id'],
-                      'name' => $output['name'],
-                      'email' => $output['email'],
-                      'phone' => $output['phone'],
-                      'birthday' => $output['birthday'],
-                      'created_at' => $output['created_at'],
-                  ];
+                     $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll();
+                  foreach($output as $key => $value){
                     echo      "<tr>
-                    <td>$clients[id]</td>
-                    <td>$clients[name]</td>
-                    <td>$clients[email]</td>
-                    <td>$clients[phone]</td>
-                    <td>$clients[birthday]</td>
-                    <td>$clients[created_at]</td>
+                    <td>$value[id]</td>
+                    <td>$value[name]</td>
+                    <td>$value[email]</td>
+                    <td>$value[phone]</td>
+                    <td>$value[birthday]</td>
+                    <td>$value[created_at]</td>
                 </tr>";
-                      return "$clients[id], $clients[name], $clients[email], $clients[phone], $clients[birthday], $clients[created_at]";
-                    echo OutputClients($clients);
+                  }
                 ?>
                 </td>
                 </tbody>
