@@ -36,6 +36,11 @@ AuthCheck('', 'login.php');
             </div>
         <div class="container">
             <p class="header__admin">Фамилия Имя Отчество</p>
+            <?php
+            require 'api/DB.php';
+            require_once 'api/clients/AdminName.php';
+            echo AdminName($_SESSION['token'], $db);
+            ?>
             <ul class="header__links">
                 <li><a href="">Клиенты</a></li>
                 <li><a href="">Товары</a></li>
@@ -61,14 +66,37 @@ AuthCheck('', 'login.php');
                     <th>Редактировать</th>
                     <th>Удалить</th>
                 </tr>
-                    <tr>
-                    <td>0</td>
-                    <td>Максимов Матвей Андреевич</td>
-                    <td>example@mail.ru</td>
-                    <td>89237698776</td>
-                    <td>22.12.2000</td>
-                    <td>15.01.2025</td>
-                </tr>
+                <tbody>
+                  <td>
+                  <?php
+                  require 'api/DB.php';
+                  require_once('api/clients/OutputClients.php');
+
+                  $clients = $db->query(
+                    "SELECT * FROM clients
+                    ")->fetchAll();
+                     $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll()[0];
+                     $clients = [
+                      'id' => $output['id'],
+                      'name' => $output['name'],
+                      'email' => $output['email'],
+                      'phone' => $output['phone'],
+                      'birthday' => $output['birthday'],
+                      'created_at' => $output['created_at'],
+                  ];
+                    echo      "<tr>
+                    <td>$clients[id]</td>
+                    <td>$clients[name]</td>
+                    <td>$clients[email]</td>
+                    <td>$clients[phone]</td>
+                    <td>$clients[birthday]</td>
+                    <td>$clients[created_at]</td>
+                </tr>";
+                      return "$clients[id], $clients[name], $clients[email], $clients[phone], $clients[birthday], $clients[created_at]";
+                    echo OutputClients($clients);
+                ?>
+                </td>
+                </tbody>
             </table>
         </div>
         <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
