@@ -1,5 +1,10 @@
 <?php
 session_start();
+if(isset($_GET['do']) && $_GET['do'] == 'logout') {
+  require_once 'api/auth/LogoutUser.php';
+  require_once 'api/DB.php';
+  LogoutUser('login.php', $db, $_SESSION['token']);
+}
 require_once 'api/auth/AuthCheck.php';
 AuthCheck('', 'login.php');
 ?>
@@ -35,7 +40,7 @@ AuthCheck('', 'login.php');
                 <li><a href="">Клиенты</a></li>
                 <li><a href="">Товары</a></li>
                 <li><a href="">Заказы</a></li>
-                <li><a href="">Выйти</a></li>
+                <li><a href="?do=logout" class="header_logout">Выйти</a></li>
             </ul>
             <h2>Список клиентов</h2>
             <button class="clients__add">
