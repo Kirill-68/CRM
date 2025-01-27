@@ -71,8 +71,10 @@ AuthCheck('', 'login.php');
                   <?php
                   require 'api/DB.php';
                   require_once('api/clients/OutputClients.php');
+                  require_once 'api/clients/ClientsSearch.php';
+                  $clients = ClientsSearch($_GET, $db);
                      $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll();
-                  foreach($output as $key => $value){
+                  foreach($clients as $key => $value){
                     echo      "<tr>
                     <td>$value[id]</td>
                     <td>$value[name]</td>
@@ -87,6 +89,17 @@ AuthCheck('', 'login.php');
                 </tbody>
             </table>
         </div>
+        <form action = "" method = "GET" class="main_filters">
+                        <label class="main_label" for="search">Поиск по имени</label>
+                        <input class="main_input" type="text" id="search" name="search" placeholder="">
+                        <select class="main_select" name="sort" id="sort">
+                        <option value="">По умолчанию</option>
+                          <option value="ASC">По возрастанию</option>
+                          <option value="DESC">По убыванию</option>
+                </select>
+                <button type="submit">Поиск</button>
+                <a href="?">Сбросить</a>
+                </form>
         <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
             <div class="modal__overlay" tabindex="-1" data-micromodal-close>
               <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
@@ -97,24 +110,43 @@ AuthCheck('', 'login.php');
                   <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                 </header>
                 <main class="modal__content" id="modal-1-content">
+                  <form action="api/clients/AddClients.php" method="POST" class="modal_form">
+                  <action class = "main_filters">
+                    <div class="container">
+                    </div>
                   <!-- <p>
                     Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
                   </p> -->
                   <form class="form">
                     <label for="FIO">ФИО</label>
-                    <input type="text">
+                    <input type="text" name = "name">
                     <label for="email" class="mail">Почта</label>
-                    <input type="text" class="te">
+                    <input type="text" name="email" class="te">
                     <label for="phone">Телефон</label>
-                    <input type="text">
+                    <input type="text" name="phone">
                     <label for="birthday" class="bir">День рождения</label>
-                    <input type="text" class="birth">
+                    <input type="text" name="birthday" class="birth">
                     <button type="submit">Создать</button>
                     <button type="submit">Отменить</button>
                 </form>
                 </main>
                 <footer class="modal__footer">
                 </footer>
+              </div>
+            </div>
+          </div>
+          <div class="modal micromodal-slide open" id="error-modal" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+              <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                  <h2 class="modal__title" id="modal-1-title">
+                    Ошибка
+                  </h2>
+                  <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+                <main class="modal__content" id="modal-1-content">
+                  
+                </main>
               </div>
             </div>
           </div>

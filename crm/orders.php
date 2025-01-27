@@ -71,17 +71,33 @@ AuthCheck('', 'login.php');
                   <?php
                   require 'api/DB.php';
                   require_once('api/clients/OutputClients.php');
-                     $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll();
+                     $output = $db->query("SELECT `id`, `client_id`, `order_date`, `total` FROM orders")->fetchAll();
+                     $output_clients = $db->query("SELECT `id`, `name` FROM clients")->fetchAll();
+                     $output_products = $db->query("SELECT `id`, `name`, `stock`, `price` FROM products")->fetchAll();
                   foreach($output as $key => $value){
-                    echo      "<tr>
+                    echo      "
+                    <tr>
                     <td>$value[id]</td>
-                    <td>$value[name]</td>
-                    <td>$value[email]</td>
-                    <td>$value[phone]</td>
-                    <td>$value[birthday]</td>
-                    <td>$value[created_at]</td>
-                </tr>";
+                ";
+            
+                foreach($output_clients as $key2 => $value2) {
+                  //if($value['client_id'] === $value2['id']) {
+               if($value['client_id'] === $value2['id']) {
+                echo      "            
+                <td>$value2[name]</td>
+                <td>$value[order_date]</td>
+            ";
+               }
+                foreach($output_products as $key3 => $value3) {
+                  if($value['client_id'] && $value2['id']) {
+            echo      "
+            <td>$value3[price]</td>
+             </tr>
+         ";
                   }
+              }                             
+                  }      
+                }
                 ?>
                 </td>
                 </tbody>
