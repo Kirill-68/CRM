@@ -135,7 +135,7 @@ AuthCheck('', 'login.php');
               </div>
             </div>
           </div>
-          <div class="modal micromodal-slide <?php if(empty($_SESSION['clients_errors'])) {echo 'open';} ?>" id="error-modal" aria-hidden="true">
+          <div class="modal micromodal-slide <?php if(isset($_SESSION['clients_errors']) && !empty($_SESSION['clients_errors'])) {echo 'open';} ?>" id="error-modal" aria-hidden="true">
             <div class="modal__overlay" tabindex="-1" data-micromodal-close>
               <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
                 <header class="modal__header">
@@ -145,7 +145,14 @@ AuthCheck('', 'login.php');
                   <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                 </header>
                 <main class="modal__content" id="modal-1-content">
-                  
+                  <?php
+                  if(isset($_SESSION['clients_errors']) && !empty($_SESSION['clients_errors'])) {
+                    echo $_SESSION['clients_errors'];
+                   //require_once 'api/clients/AddClients.php';
+                 
+                    $_SESSION['clients_errors'] = '';
+                  }
+                  ?>
                 </main>
               </div>
             </div>
