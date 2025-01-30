@@ -19,3 +19,18 @@
 
 }
 @media (max-width: 576px){ }
+.k{
+    display: block;
+    width: 20px;
+    margin-top: 200px;
+  }
+  .kk{
+    display: block;
+    width: 20px;
+    margin-top: 150px;
+  }
+  .kkk{
+    display: block;
+    width: 20px;
+    margin-top: 250px;
+  }

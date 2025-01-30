@@ -32,6 +32,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ../../clients.php');
         exit;
     }
+    $stmt = $db->prepare("insert into clients(`name`, `email`, `phone`, `birthday`) values(?,?,?,?)");   
+   $stmt->execute([
+    $formData['name'],
+         $formData['email'],
+         $formData['phone'],
+         $formData['birthday']
+   ]);
 }
 else {
     echo json_encode([

@@ -15,6 +15,7 @@ AuthCheck('', 'login.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles/modules/micromodal.css">
+    <link rel="stylesheet" href="clients.css">
 </head>
 <body>
     <header class="header">
@@ -64,7 +65,6 @@ AuthCheck('', 'login.php');
                     <th>История заказов</th>
                     <button type="submit"></button>
                     <th>Редактировать</th>
-                    <th>Удалить</th>
                 </tr>
                 <tbody>
                   <td>
@@ -82,6 +82,9 @@ AuthCheck('', 'login.php');
                     <td>$value[phone]</td>
                     <td>$value[birthday]</td>
                     <td>$value[created_at]</td>
+                    <td><div class='o'><a href='api/clients/DeleteClient.php?id=$value[id]'>
+                    <i class='fa fa-tresh'></i>Удалить
+                    </a></div></td>
                 </tr>";
                   }
                 ?>
