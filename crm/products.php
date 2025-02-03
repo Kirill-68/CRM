@@ -46,47 +46,37 @@
             <table>
                 <thead>
                     <th>ID</th>
-                    <th>Название</th>
-                    <th>Описание</th>
-                    <th>Цена</th>
-                    <th>Колличество</th>
-                    <th>Редактировать</th>
-                    <th>Удалить</th>
-                    <th>Создать QR</th>
+                    <th>ФИО клиента</th>
+                    <th>Дата заказа</th>
+                    <th>Сумма</th>
+                    <th>Состав заказа</th>
+                    <th>Действия</th>
                 </thead>
                 <tbody>
-                   <tr> <td>0</td>
-                    <td>Огурец</td>
-                    <td>Обыкновенный</td>
-                    <td>150</td>
-                    <td>3шт</td>
-                    <td><i class="fa fa-pencil-square-o" aria-hidden="true" onclick="MicroModal.show('edit-modal')"></i></td>
-                    <td><i class="fa fa-trash-o" aria-hidden="true" onclick="MicroModal.show('delete-modal')"></i></td>
-                    <td><i class="fa fa-qrcode" aria-hidden="true" onclick="MicroModal.show('qr-modal')"></i></td>
-                  </tr>
-                  <tr> <td>1</td>
-                    <td>Огурец</td>
-                    <td>Обыкновенный</td>
-                    <td>150</td>
-                    <td>3шт</td>
-                    <td><i class="fa fa-pencil-square-o" aria-hidden="true" onclick="MicroModal.show('edit-modal')"></i></td>
-                    <td><i class="fa fa-trash-o" aria-hidden="true" onclick="MicroModal.show('delete-modal')"></i></td>
-                    <td><i class="fa fa-qrcode" aria-hidden="true" onclick="MicroModal.show('qr-modal')"></i></td>
-                  </tr>
-                  <tr> <td>2</td>
-                    <td>Огурец</td>
-                    <td>Обыкновенный</td>
-                    <td>150</td>
-                    <td>3шт</td>
-                    <td><i class="fa fa-pencil-square-o" aria-hidden="true" onclick="MicroModal.show('edit-modal')"></i></td>
-                    <td><i class="fa fa-trash-o" aria-hidden="true" onclick="MicroModal.show('delete-modal')"></i></td>
-                    <td><i class="fa fa-qrcode" aria-hidden="true" onclick="MicroModal.show('qr-modal')"></i></td>
-                  </tr>
-                  <tr> <td>3</td>
-                    <td>Огурец</td>
-                    <td>Обыкновенный</td>
-                    <td>150</td>
-                    <td>3шт</td>
+                   <tr> <td>
+                    <?php
+                     require 'api/DB.php';
+                     require_once('api/clients/OutputClients.php');
+                     require_once 'api/clients/ClientsSearch.php';
+                     $clients = ClientsSearch($_GET, $db);
+                     $output = $db->query("SELECT `id`, `name` FROM clients")->fetchAll();
+                     $orders = $db->query("SELECT `client_id`, `order_date`, `total` FROM orders")->fetchAll();
+                     $products = $db->query("SELECT `id`, `name` FROM products")->fetchAll();
+                  foreach($clients as $key => $value){
+                    echo      "<tr>
+                    <td>$value[id]</td>
+                    <td>$value[name]</td>          
+                ";
+                foreach($orders as $key2 => $value2){
+                if($value2['client_id'] === $value['id']){
+                  echo      "
+                  <td>$value2[order_date]</td>
+                  <td>$value2[total]</td>
+                  </tr>";
+                }
+              }
+            }
+                ?>
                     <td><i class="fa fa-pencil-square-o" aria-hidden="true" onclick="MicroModal.show('edit-modal')"></i></td>
                     <td><i class="fa fa-trash-o" aria-hidden="true" onclick="MicroModal.show('delete-modal')"></i></td>
                     <td><i class="fa fa-qrcode" aria-hidden="true" onclick="MicroModal.show('qr-modal')"></i></td>

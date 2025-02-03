@@ -15,6 +15,7 @@ AuthCheck('', 'login.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles/modules/micromodal.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <header class="header">
@@ -57,12 +58,11 @@ AuthCheck('', 'login.php');
                 <tr>
                     <th>ИД</th>
                     <th>ФИО клиента</th>
-                    <th>дата заказа</th>
-                    <th>цена</th>
-                    <th>название</th>
-                    <th>количество</th>
-                    <th>цена</th>
-                    <!-- <th>Редактировать</th> -->
+                    <th>Дата заказа</th>
+                    <th>Сумма</th>
+                    <th>Состав заказа</th>
+                    <th>Чек</th>
+                    <th>Редактировать</th>
                     <input type="submit" value="Редактировать" class="redirect">
                     <th>Удалить</th>
                 </tr>
@@ -71,33 +71,77 @@ AuthCheck('', 'login.php');
                   <?php
                   require 'api/DB.php';
                   require_once('api/clients/OutputClients.php');
-                     $output = $db->query("SELECT `id`, `client_id`, `order_date`, `total` FROM orders")->fetchAll();
-                     $output_clients = $db->query("SELECT `id`, `name` FROM clients")->fetchAll();
-                     $output_products = $db->query("SELECT `id`, `name`, `stock`, `price` FROM products")->fetchAll();
-                  foreach($output as $key => $value){
-                    echo      "
-                    <tr>
-                    <td>$value[id]</td>
-                ";
+                  require_once('api/clients/OutputClients.php');
+                     require_once 'api/clients/ClientsSearch.php';
+                    // $clients = ClientsSearch($_GET, $db);
+                    // $output = $db->query("SELECT `id`, `name` FROM clients")->fetchAll();
+                    // $orders = $db->query("SELECT `id`, `client_id`, `order_date`, `total` FROM orders")->fetchAll();
+                    // $products = $db->query("SELECT `id`, `name` FROM products")->fetchAll();
+                    $orders= $db->query("
+                    SELECT
+                    orders.id,
+                    clients.name,
+                    orders.order_date,
+                    orders.total,
+                    GROUP_CONCAT(CONCAT(products.name,
+                    ' ( ',order_items.quantity,'шт. : ',products.price,')'
+                    ) SEPARATOR ', ') AS product_names
+                     FROM
+                     orders
+                     JOIN
+                     clients ON orders.client_id = clients.id
+                     JOIN
+                     order_items ON orders.id = order_items.order_id
+                     JOIN
+                     products ON order_items.product_id = products.id
+                     GROUP BY
+                     orders.id, clients.name, orders.order_date, orders.total;
+                     ")->fetchAll();
+                     foreach ($orders as $key => $order) {
+                          $id = $order['id'];
+                          $name = $order['name'];
+                          $date = $order['order_date'];
+                          $sum = $order['total'];
+                          $details = $order['product_names'];
+                      echo "
+                      <tr>
+                        <th>$id</th>
+                        <th>$name</th>
+                        <th>$date</th>
+                        <th>$sum</th>
+                        <th>$details</th>
+                        <th><button type=submit style='height:50px; width:50px'> <img src=images/check.png style=width:50px alt=1></button></th>
+                        <th><button type=submit style='height:50px; width:50px'> <img src=images/images.png style=width:50px alt=1></button></th>
+                        <th><button type=submit style='height:50px; width:50px'> <img src=images/w.png style=width:50px alt=1></button></th>
+                    </tr>";
+                     }
+//                      $order_items = $db->query("SELECT `order_id`, `product_id` FROM order_items")->fetchAll();
+//                  foreach($output as $key => $value){
+//                    echo      "<tr>
+//                    <td>$value[id]</td>
+//                    <td>$value[name]</td>  
+                          
+//                ";
+//                foreach($orders as $key2 => $value2){
+//                if($value2['client_id'] === $value['id']){
+//                  echo      " 
+//                  <td>$value2[order_date]</td>
+//                  <td>$value2[total]</td>
+//                  ";
+//                }
+//         }
+//            }
+//            echo json_encode($orders2);
+// foreach($orders as $key7 => $value7){
+
+//                                       foreach($orders2 as $key3 => $value3){
+//                                         if($value7['client_id'] === $value3['id']){
+//                                           echo "<td>$value3[product_names]</td></tr>
+//                                           ";
+//                                         }
+//                                       }
             
-                foreach($output_clients as $key2 => $value2) {
-                  //if($value['client_id'] === $value2['id']) {
-               if($value['client_id'] === $value2['id']) {
-                echo      "            
-                <td>$value2[name]</td>
-                <td>$value[order_date]</td>
-            ";
-               }
-                foreach($output_products as $key3 => $value3) {
-                  if($value['client_id'] && $value2['id']) {
-            echo      "
-            <td>$value3[price]</td>
-             </tr>
-         ";
-                  }
-              }                             
-                  }      
-                }
+//               }
                 ?>
                 </td>
                 </tbody>
