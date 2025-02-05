@@ -16,13 +16,18 @@ AuthCheck('', 'login.php');
     <title>Document</title>
     <link rel="stylesheet" href="styles/modules/micromodal.css">
     <link rel="stylesheet" href="login.css">
+    <script defer 
+   src="https://unpkg.com/micromodal/dist/micromodal.min.js">
+  </script>
+
+  <script defer src="initClientsModal.js"> </script>
 </head>
 <body>
     <header class="header">
         <h2 class="modal__title" id="modal-1-title">
             История заказов
         </h2>
-        <button onclick="MicroModal.show('modal-1')"><img src="images/pn.png" class="im"></button>
+        <button onclick="MicroModal.show('add-modal')"><img src="images/pn.png" class="im"></button>
         <small>Фамилия Имя Отчество</small>
         <button class="modal__close" aria-label="Close-modal" data-micromodal-></button>
         </header>
@@ -48,7 +53,7 @@ AuthCheck('', 'login.php');
                 <li><a href="">Заказы</a></li>
                 <li><a href="?do=logout" class="header_logout">Выйти</a></li>
             </ul>
-            <h2>Список клиентов</h2>
+            <h2>Список заказов</h2>
             <button class="clients__add">
                 <i class="fa fa-plus-circle">
                     
@@ -73,10 +78,6 @@ AuthCheck('', 'login.php');
                   require_once('api/clients/OutputClients.php');
                   require_once('api/clients/OutputClients.php');
                      require_once 'api/clients/ClientsSearch.php';
-                    // $clients = ClientsSearch($_GET, $db);
-                    // $output = $db->query("SELECT `id`, `name` FROM clients")->fetchAll();
-                    // $orders = $db->query("SELECT `id`, `client_id`, `order_date`, `total` FROM orders")->fetchAll();
-                    // $products = $db->query("SELECT `id`, `name` FROM products")->fetchAll();
                     $orders= $db->query("
                     SELECT
                     orders.id,
@@ -115,38 +116,10 @@ AuthCheck('', 'login.php');
                         <th><button type=submit style='height:50px; width:50px'> <img src=images/w.png style=width:50px alt=1></button></th>
                     </tr>";
                      }
-//                      $order_items = $db->query("SELECT `order_id`, `product_id` FROM order_items")->fetchAll();
-//                  foreach($output as $key => $value){
-//                    echo      "<tr>
-//                    <td>$value[id]</td>
-//                    <td>$value[name]</td>  
-                          
-//                ";
-//                foreach($orders as $key2 => $value2){
-//                if($value2['client_id'] === $value['id']){
-//                  echo      " 
-//                  <td>$value2[order_date]</td>
-//                  <td>$value2[total]</td>
-//                  ";
-//                }
-//         }
-//            }
-//            echo json_encode($orders2);
-// foreach($orders as $key7 => $value7){
-
-//                                       foreach($orders2 as $key3 => $value3){
-//                                         if($value7['client_id'] === $value3['id']){
-//                                           echo "<td>$value3[product_names]</td></tr>
-//                                           ";
-//                                         }
-//                                       }
-            
-//               }
                 ?>
                 </td>
                 </tbody>
             </table>
-                    <!-- <input type="submit" value="Редактировать"> -->
         </div>
         <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
             <div class="modal__overlay" tabindex="-1" data-micromodal-close>
@@ -157,32 +130,205 @@ AuthCheck('', 'login.php');
                   </h2>
                   <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                 </header>
-                <main class="modal__content" id="modal-1-content">
-                  <!-- <p>
-                    Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
-                  </p> -->
+    <main class="modal__content" id="modal-1-content">
+        <form action="api/product/AddProduct.php" method="POST" id="client-form">
+        <action class = "main_filters">
+          <div class="form-group">
+            <label for="full-name">Название</label>
+            <input type="text" id="full-name" name="name" required placeholder="Введите название товара">
+          </div>
+          <div class="form-group">
+            <label for="email">Описание</label>
+            <input type="text" id="email" name="description" required placeholder="Введите описание товара">
+          </div>
+          <div class="form-group">
+            <label for="price">Цена</label>
+            <input type="text" id="price" name="price" required placeholder="Введите цену товара">
+          </div>
+          <div class="form-group">
+            <label for="stock">Количество</label>
+            <input type="text" id="stock" name="stock" required placeholder="Введите цену товара">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-create">Добавить</button>
+            <button type="button" class="btn-cancel" data-micromodal-close>Отменить</button>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+</div>
+<div class="modal micromodal-slide" id="delete-modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+      <header class="modal__header">
+        <h2 class="modal__title" id="modal-1-title">
+          Удалить клиента
+        </h2>
+        <button onclick="MicroModal.show('add-modal')"><img src="images/pn.png" class="im"></button>
+        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+      </header>
+      <main class="modal__content" id="modal-1-content">
+        <button>Удалить</button>
+        <button onclick="MicroModal.close('delete-modal');" > Отменить</button>
+      </main>
+    </div>
+  </div>
+</div>
+<div class="modal micromodal-slide" id="edit-modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+      <header class="modal__header">
+        <h2 class="modal__title" id="modal-1-title">
+          Редактировать товар
+        </h2>
+        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+      </header>
+      <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+              <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                  <h2 class="modal__title" id="modal-1-title">
+                    Micromodal
+                  </h2>
+                  <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+      <main class="modal__content" id="modal-1-content">
+        <form class="modal_form">
+        <action class = "main_filters">
+                    <div class="container">
+                    </div>
                   <form class="form">
                     <label for="FIO">ФИО</label>
-                    <input type="text">
+                    <input type="text" name = "name">
                     <label for="email" class="mail">Почта</label>
-                    <input type="text" class="te">
+                    <input type="text" name="email" class="te">
                     <label for="phone">Телефон</label>
-                    <input type="text">
+                    <input type="text" name="phone">
                     <label for="birthday" class="bir">День рождения</label>
-                    <input type="text" class="birth">
+                    <input type="text" name="birthday" class="birth">
                     <button type="submit">Создать</button>
                     <button type="submit">Отменить</button>
                 </form>
-                </main>
-                <footer class="modal__footer">
+          <div class="form-actions">
+            <button type="submit" class="btn-create">Редактировать</button>
+            <button type="button" class="btn-cancel" data-micromodal-close>Отменить</button>
+          </div>
+        </form>
+      </main>
+      <footer class="modal__footer">
                 </footer>
               </div>
             </div>
           </div>
-        <script defer
-        src="https://unpkg.com/micromodal/dist/micromodal.min.js"
-        ></script>
-        <script defer src="initClientsModal.js"></script>
-    </main>
+          <div class="modal micromodal-slide <?php if(isset($_SESSION['product_errors']) && !empty($_SESSION['product_errors'])) {echo 'open';} ?>" id="error-modal" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+              <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                  <h2 class="modal__title" id="modal-1-title">
+                    Ошибка
+                  </h2>
+                  <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+                <main class="modal__content" id="modal-1-content">
+                  <?php
+                  if(isset($_SESSION['product_errors']) && !empty($_SESSION['product_errors'])) {
+                    echo $_SESSION['product_errors'];
+                   //require_once 'api/clients/AddClients.php';
+                 
+                    $_SESSION['product_errors'] = '';
+                  }
+                  ?>
+                </main>
+    </div>
+  </div>
+</div>
+
+
+  </main>
+  <div class="modal micromodal-slide" id="add-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+          <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <header class="modal__header">
+              <h2 class="modal__title" id="modal-1-title">
+                Создание заказа
+              </h2>
+              <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+            </header>
+            <main class="modal__content" id="modal-1-content">
+                <form action="api/orders/AddOrders.php" method="POST" class="modal__form">
+                    <div class="modal__form-group">
+                        <label for="client">Клиент</label>
+                        <select class="main__select" name="client" id="client">
+                            <?php
+                            $DB = new PDO(
+                              'mysql:host=localhost;dbname=crm;charset=utf8', 
+                              'root', 
+                              null, 
+                              [ PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ],
+                          );
+                          
+                                $users = $DB->query("SELECT id, name FROM clients")->fetchAll();
+                                foreach ($users as $key => $user) {
+                                    $id = $user['id'];
+                                    $name = $user['name'];
+                                    echo "<option value='$id'>$name</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="modal__form-group">
+                        <label for="products">Товар</label>
+                        <select class="main__select" name="products" id="products" multiple>
+                        <?php
+                                $products = $DB->query("SELECT id, name, price, stock FROM products WHERE stock > 0")->fetchAll();
+                                foreach ($products as $key => $product) {
+                                    $id = $product['id'];
+                                    $name = $product['name'];
+                                    $price = $product['price'];
+                                    $stock = $product['stock'];
+                                    echo "<option value='$id'>$name - {$price}₽ - ({$stock} шт.)</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="modal__form-actions">
+                        <button type="submit" class="modal__btn modal__btn-primary">Создать</button>
+                        <button type="button" class="modal__btn modal__btn-secondary" data-micromodal-close>Отменить</button>
+                    </div>
+                </form>
+            </main>
+          </div>
+        </div>
+      </div>
+      <div class="modal micromodal-slide
+        <?php
+        if (isset($_SESSION['orders_error']) && 
+        !empty($_SESSION['orders_error'])) {
+            echo 'open';
+        }
+        ?>
+    " id="error-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                    <h2 class="modal__title" id="modal-1-title">
+                        Ошибка!
+                    </h2>   
+                    <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+                <main class="modal__content" id="modal-1-content">
+                <?php
+                if (isset($_SESSION['orders_error'])
+                && !empty($_SESSION['orders_error'])) {
+                    echo $_SESSION['orders_error'];
+
+                    $_SESSION['orders_error'] = '';
+                }
+                ?>
+                </main>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
