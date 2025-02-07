@@ -27,7 +27,7 @@ AuthCheck('', 'login.php');
         <h2 class="modal__title" id="modal-1-title">
             История заказов
         </h2>
-        <button onclick="MicroModal.show('add-modal')"><img src="images/pn.png" class="im"></button>
+           <!-- <button onclick="MicroModal.show('add-modal')"><img src="images/pn.png" class="im"></button> -->
         <small>Фамилия Имя Отчество</small>
         <button class="modal__close" aria-label="Close-modal" data-micromodal-></button>
         </header>
@@ -53,111 +53,147 @@ AuthCheck('', 'login.php');
                 <li><a href="">Заказы</a></li>
                 <li><a href="?do=logout" class="header_logout">Выйти</a></li>
             </ul>
-            <h2>Список заказов</h2>
-            <button class="clients__add">
-                <i class="fa fa-plus-circle">
-                    
-                </i>
-            </button>
-            <table class="order__items">
-                <tr>
-                    <th>ИД</th>
-                    <th>ФИО клиента</th>
-                    <th>Дата заказа</th>
-                    <th>Сумма</th>
-                    <th>Состав заказа</th>
-                    <th>Чек</th>
-                    <th>Редактировать</th>
-                    <input type="submit" value="Редактировать" class="redirect">
-                    <th>Удалить</th>
-                </tr>
-                <tbody>
-                  <td>
-                  <?php
-                  require 'api/DB.php';
-                  require_once('api/clients/OutputClients.php');
-                  require_once('api/clients/OutputClients.php');
-                     require_once 'api/clients/ClientsSearch.php';
-                    $orders= $db->query("
-                    SELECT
-                    orders.id,
-                    clients.name,
-                    orders.order_date,
-                    orders.total,
-                    GROUP_CONCAT(CONCAT(products.name,
-                    ' ( ',order_items.quantity,'шт. : ',products.price,')'
-                    ) SEPARATOR ', ') AS product_names
-                     FROM
-                     orders
-                     JOIN
-                     clients ON orders.client_id = clients.id
-                     JOIN
-                     order_items ON orders.id = order_items.order_id
-                     JOIN
-                     products ON order_items.product_id = products.id
-                     GROUP BY
-                     orders.id, clients.name, orders.order_date, orders.total;
-                     ")->fetchAll();
-                     foreach ($orders as $key => $order) {
-                          $id = $order['id'];
-                          $name = $order['name'];
-                          $date = $order['order_date'];
-                          $sum = $order['total'];
-                          $details = $order['product_names'];
-                      echo "
-                      <tr>
-                        <th>$id</th>
-                        <th>$name</th>
-                        <th>$date</th>
-                        <th>$sum</th>
-                        <th>$details</th>
-                        <th><button type=submit style='height:50px; width:50px'> <img src=images/check.png style=width:50px alt=1></button></th>
-                        <th><button type=submit style='height:50px; width:50px'> <img src=images/images.png style=width:50px alt=1></button></th>
-                        <th><button type=submit style='height:50px; width:50px'> <img src=images/w.png style=width:50px alt=1></button></th>
-                    </tr>";
-                     }
-                ?>
-                </td>
-                </tbody>
-            </table>
-        </div>
-        <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
-            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-              <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <main>
+        <section class="filters">
+            <div class="container">
+                <form action="" class="main__form">
+
+                    <label for="search">Поиск по названию</label>
+                    <input type="text" id="search" name="search" placeholder="Введите название" >
+                    <label for="search">Сортировка</label>
+                    <select name="search_name" id="sort">
+                        <option value="clients.name">По клиенту</option>
+                        <option value="orders.id">По Ид</option>
+                        <option value="orders.order_date">По дате</option>
+                        <option value="orders.total">По сумме</option>
+                        <option value="orders.status">По статусу</option>
+                    </select>
+                    <label for="search">Сортировать </label>
+                    <select name="sort" id="sort">
+                        <option value="">По умолчанию</option>
+                        <option value="ASC">По возрастанию</option>
+                        <option value="DESC">По убыванию</option>
+                    </select>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="checkbox" name="checkbox" <?php echo isset($_GET['checkbox']) ? 'checked' : ''; ?>>
+                        <label for="checkbox">Показать неактивные заказы</label>
+                    </div>
+                    <button type="submit">Поиск</button>
+                    <a class="search" href="?" >Сбросить</a>
+                </form>
+            </div>
+        </section>  
+        <section class="orders">
+            <h2 class="orders_title">Список товаров</h2>
+            <button onclick="MicroModal.show('add-modal')" class="orders_add"><img src="images/pn.png" class="im"><i class="fa fa-plus-square fa-2x"
+                    aria-hidden="true"></i></button>
+            <div class="container">
+                <table>
+                    <thead>
+                        <th>ИД</th>
+                        <th>ФИО клиента</th>
+                        <th>Дата заказа</th>
+                        <th>Цена</th>
+                        <th>Инфор. о заказе</th>
+                        <th>Статус</th>
+                        <th>Редак.</th>
+                        <th>Удалить</th>
+                        <th>Ген. чека</th>
+                        <th>Подр.</th>
+                    </thead>
+                    <tbody>
+                    <?php
+                        require 'api/DB.php';
+                        require_once 'api/orders/OutputOrders.php';
+                        require_once 'api/orders/OrdersSearch.php';
+                        // $orders = $db->query(
+                        //      "SELECT orders.id, clients.name, orders.order_date, orders.total, 
+                        //         GROUP_CONCAT(CONCAT(products.name, ' : ', order_items.price, ' : ', order_items.quantity, ' кол.') SEPARATOR ', ') AS product_names
+                        //         FROM orders 
+                        //         JOIN clients ON orders.client_id = clients.id 
+                        //         JOIN order_items ON orders.id = order_items.order_id 
+                        //         JOIN products ON order_items.product_id = products.id 
+                        //         GROUP BY  orders.id, clients.name, orders.order_date, orders.total
+                        // ")->fetchAll();
+                        $orders = OrdersSearch($_GET,$db);
+                        OutputOrders($orders);
+
+                        ?>
+                        <!-- <tr>
+                            <td>0</td>
+                            <td>Футболка</td>
+                            <td>2024-01-12 15:20:22</td>
+                            <td>1000.00</td>
+                            <td>Заказ №1</td>
+                            <td>10</td>
+                            <td>10000.00</td>
+                            <td onclick="MicroModal.show('edit-modal')"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            </td>
+                            <td onclick="MicroModal.show('delete-modal')"><i class="fa fa-trash" aria-hidden="true"></i>
+                            </td>
+                            <td><i class="fa fa-qrcode" aria-hidden="true"></i></td>
+                            <td onclick="MicroModal.show('history-modal')"><i class="fa fa-info-circle" aria-hidden="true"></i></td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+<main>
+<div class="modal micromodal-slide" id="edit-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
                 <header class="modal__header">
-                  <h2 class="modal__title" id="modal-1-title">
-                    Micromodal
-                  </h2>
-                  <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                    <h2 class="modal__title" id="modal-1-title">
+                        Редактировать заказ
+                    </h2>
+                    <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
                 </header>
-    <main class="modal__content" id="modal-1-content">
-        <form action="api/product/AddProduct.php" method="POST" id="client-form">
-        <action class = "main_filters">
-          <div class="form-group">
-            <label for="full-name">Название</label>
-            <input type="text" id="full-name" name="name" required placeholder="Введите название товара">
-          </div>
-          <div class="form-group">
-            <label for="email">Описание</label>
-            <input type="text" id="email" name="description" required placeholder="Введите описание товара">
-          </div>
-          <div class="form-group">
-            <label for="price">Цена</label>
-            <input type="text" id="price" name="price" required placeholder="Введите цену товара">
-          </div>
-          <div class="form-group">
-            <label for="stock">Количество</label>
-            <input type="text" id="stock" name="stock" required placeholder="Введите цену товара">
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn-create">Добавить</button>
-            <button type="button" class="btn-cancel" data-micromodal-close>Отменить</button>
-          </div>
-        </form>
-      </main>
+                <main class="modal__content" id="modal-1-content">
+                  
+                    <form id="registration-form">
+                        <label for="name">Название:</label>
+                        <input type="text" id="name" name="name" required>
+
+                        <label for="data">Дата заказа:</label>
+                        <input type="data" id="data" name="data" required>
+
+                        <label for="price">Цена:</label>
+                        <input type="price" id="price" name="price" required>
+
+                        <label for="stock">Количество:</label>
+                        <input type="stock" id="stock" name="stock" required>
+
+                        <button class="create" type="submit">Редактировать</button>
+                        <button onclick="MicroModal.close('edit-modal')" class="cancel" type="button">Отмена</button>
+                    </form>
+                </main>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+
+
+
+    <div class="modal micromodal-slide" id="delete-modal" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                <header class="modal__header">
+                    <h2 class="modal__title" id="modal-1-title">
+                        Вы уверены, что хотите удалить заказ?
+                    </h2>
+                    <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                </header>
+                <main class="modal__content" id="modal-1-content">
+                    <form id="registration-form">
+                        <button class="cancel" type="submit">Удалить</button>
+                        <button onclick="MicroModal.close('delete-modal')" class="create" type="button">Отмена</button>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </div>
+
+
 <div class="modal micromodal-slide" id="delete-modal" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
     <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
@@ -175,7 +211,7 @@ AuthCheck('', 'login.php');
     </div>
   </div>
 </div>
-<div class="modal micromodal-slide" id="edit-modal" aria-hidden="true">
+<!-- <div class="modal micromodal-slide" id="edit-modal" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
     <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
       <header class="modal__header">
@@ -220,7 +256,7 @@ AuthCheck('', 'login.php');
                 </footer>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="modal micromodal-slide <?php if(isset($_SESSION['product_errors']) && !empty($_SESSION['product_errors'])) {echo 'open';} ?>" id="error-modal" aria-hidden="true">
             <div class="modal__overlay" tabindex="-1" data-micromodal-close>
               <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
@@ -277,9 +313,13 @@ AuthCheck('', 'login.php');
                             ?>
                         </select>
                     </div>
+
+
+
+                    
                     <div class="modal__form-group">
-                        <label for="products">Товар</label>
-                        <select class="main__select" name="products" id="products" multiple>
+                        <label for="products">Товар</label>         
+                        <select class="main__select" name="products[]" id="products" multiple>
                         <?php
                                 $products = $DB->query("SELECT id, name, price, stock FROM products WHERE stock > 0")->fetchAll();
                                 foreach ($products as $key => $product) {
@@ -330,5 +370,6 @@ AuthCheck('', 'login.php');
             </div>
         </div>
     </div>
+    
 </body>
 </html>
