@@ -96,6 +96,22 @@ AuthCheck('', 'login.php');
                         <label class="main_label" for="search">Поиск по имени</label>
                         <input class="main_input" type="text" id="search" name="search" placeholder="">
                         <select class="main_select" name="sort" id="sort">
+                          <?php
+                          require_once 'api/helpers/selectDefaultValue.php';
+                          $searchNameOptions = [
+                            [
+                            'key' => 'name',
+                            'value' => 'Поиск по имени'
+                          ],
+                          [
+                          'key' => 'email',
+                          'value' => 'Поиск по почте'
+                          ]
+                          ];
+                          selectDefaultValue('search_name', $searchNameOptions, 'name');
+                          ?>
+
+
                         <option value="">По умолчанию</option>
                           <option value="ASC">По возрастанию</option>
                           <option value="DESC">По убыванию</option>
