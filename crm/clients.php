@@ -75,8 +75,12 @@ AuthCheck('', 'login.php');
                   $clients = ClientsSearch($_GET, $db);
                      $output = $db->query("SELECT `id`, `name`, `email`, `phone`, `birthday`, `created_at` FROM clients")->fetchAll();
                   foreach($clients as $key => $value){
-                    echo      "<tr>
-                    <td>$value[id]</td>
+                    $_GE = $k;
+                if($_GET[$_GE]){
+                  echo      "
+                    <form action='api/helpers/selectDefaultValue.php' method='GET'>
+                    <tr>
+                    <td>$value[id]<input type='checkbox' name=$_GE></td>
                     <td>$value[name]</td>
                     <td>$value[email]</td>
                     <td>$value[phone]</td>
@@ -86,6 +90,8 @@ AuthCheck('', 'login.php');
                     <i class='fa fa-tresh'></i>Удалить
                     </a></div></td>
                 </tr>";
+                  header("Location: api/helpers/selectDefaultValue.php");
+                }
                   }
                 ?>
                 </td>
@@ -95,27 +101,20 @@ AuthCheck('', 'login.php');
         <form action = "" method = "GET" class="main_filters">
                         <label class="main_label" for="search">Поиск по имени</label>
                         <input class="main_input" type="text" id="search" name="search" placeholder="">
-                        <select class="main_select" name="sort" id="sort">
-                          <?php
-                          require_once 'api/helpers/selectDefaultValue.php';
-                          $searchNameOptions = [
-                            [
-                            'key' => 'name',
-                            'value' => 'Поиск по имени'
-                          ],
-                          [
-                          'key' => 'email',
-                          'value' => 'Поиск по почте'
-                          ]
-                          ];
-                          selectDefaultValue('search_name', $searchNameOptions, 'name');
-                          ?>
+                        <?php
+                        require_once 'api/helpers/selectDefaultValue.php';
+                        echo "
+                        <select class='main_select' name=$key id='sort'>
+                         
+                          
 
 
-                        <option value="">По умолчанию</option>
-                          <option value="ASC">По возрастанию</option>
-                          <option value="DESC">По убыванию</option>
+                        <option value=''>По умолчанию</option>
+                          <option value='ASC'>По возрастанию</option>
+                          <option value='DESC'>По убыванию</option>
                 </select>
+                ";
+                ?>
                 <button type="submit">Поиск</button>
                 <a href="?">Сбросить</a>
                 </form>
@@ -137,16 +136,20 @@ AuthCheck('', 'login.php');
                     Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
                   </p> -->
                   <form class="form">
-                    <label for="FIO">ФИО</label>
-                    <input type="text" name = "name">
-                    <label for="email" class="mail">Почта</label>
-                    <input type="text" name="email" class="te">
-                    <label for="phone">Телефон</label>
-                    <input type="text" name="phone">
-                    <label for="birthday" class="bir">День рождения</label>
-                    <input type="text" name="birthday" class="birth">
-                    <button type="submit">Создать</button>
-                    <button type="submit">Отменить</button>
+                    <?php
+                    echo "
+                    <label for='FIO'>ФИО</label>
+                    <input type='text' name = $value[name]>
+                    <label for='email' class='mail'>Почта</label>
+                    <input type='text' name=$value[email] class='te'>
+                    <label for='phone'>Телефон</label>
+                    <input type='text' name=$value[phone]>
+                    <label for='birthday' class='bir'>День рождения</label>
+                    <input type='text' name=$value[birthday] class='birth'>
+                    <button type='submit'>Создать</button>
+                    <button type='submit'>Отменить</button>
+                    ";
+                    ?>
                 </form>
                 </main>
                 <footer class="modal__footer">
