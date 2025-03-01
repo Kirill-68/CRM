@@ -1,0 +1,36 @@
+.clients__title{
+    font-size: 24px;
+    text-align: center;
+    margin: 16px  0;
+}
+
+.clients__add{
+    position: sticky;
+    top: 16px;
+}
+
+@media (max-width: 1400px){
+
+}
+@media (max-width: 992px){
+
+}
+@media (max-width: 768px){
+
+}
+@media (max-width: 576px){ }
+.k{
+    display: block;
+    width: 20px;
+    margin-top: 200px;
+  }
+  .kk{
+    display: block;
+    width: 20px;
+    margin-top: 150px;
+  }
+  .kkk{
+    display: block;
+    width: 20px;
+    margin-top: 250px;
+  }
